@@ -1,4 +1,5 @@
 const express = require('express');
+
 const { PORT = 3000 } = process.env;
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -11,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '62e2b1d9e1d252a756403491'
+    _id: '62e2b1d9e1d252a756403491',
   };
 
   next();
@@ -25,11 +26,11 @@ app.use((req, res) => {
 });
 
 async function main() {
-  await mongoose.connect('mongodb://localhost:27017/mestodb')
-  console.log('Connect to db')
+  await mongoose.connect('mongodb://localhost:27017/mestodb');
+  console.log('Connect to db');
 
-  await app.listen(PORT)
-    console.log(`App listening on port ${PORT}`);
+  await app.listen(PORT);
+  console.log(`App listening on port ${PORT}`);
 }
 
 main();

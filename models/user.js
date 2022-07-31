@@ -3,20 +3,20 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    minlength: 2,
+    minlength: [2, 'Must be at least 2, got {VALUE}'],
     maxlength: 30,
-    required: true
+    required: true,
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    required: true
+    required: true,
   },
   avatar: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 });
 
 module.exports = mongoose.model('user', userSchema);
