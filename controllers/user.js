@@ -40,10 +40,12 @@ module.exports.changeUserInfo = (req, res) => {
 
 // обновляет аватар
 module.exports.findUserAvatar = (req, res) => {
-  const { link } = req.body;
+  const { avatar } = req.body;
   const userId = req.user._id;
 
-  User.findByIdAndUpdate(userId, { link }, { new: true, runValidators: true })
+  console.log()
+
+  User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .orFail()
     .then(user => res.send({ data: user }))
     .catch(err => errorMessage(err, req, res));
