@@ -1,10 +1,11 @@
-const Card = require('../controllers/card');
+const Card = require('../models/card');
+const { errorMessage } = require('../utils/errorMessage');
 
 // возвращает все карточки
 module.exports.getCard = (req, res) => {
   Card.find({})
     .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(err => errorMessage(err, req, res));
 };
 
 // создаёт карточку
@@ -12,36 +13,31 @@ module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
 
-  User.create({ name, link, owner: ownerId })
+  Card.create({ name, link, owner: ownerId })
     .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(err => errorMessage(err, req, res));
 };
 
 // удаляет карточку по идентификатору
-module.exports.deleteCard((req, res) => {
+module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .orFail()
     .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
-});
+    .catch(err => errorMessage(err, req, res));
+};
 
 // поставить лайк карточке
-module.exports.likeCard((req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-      { $addToSet: { likes: req.user._id } },
-      { new: true },
-    )
+module.exports.likeCard = (req, res) => {
+  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+    .orFail()
     .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
-});
+    .catch(err => errorMessage(err, req, res));
+};
 
 // убрать лайк с карточки
-module.exports.dislikeCard((req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-      { $pul: { likes: req.user._id } },
-      { new: true },
-    )
+module.exports.dislikeCard = (req, res) => {
+  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+    .orFail()
     .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
-})
+    .catch(err => errorMessage(err, req, res));
+};

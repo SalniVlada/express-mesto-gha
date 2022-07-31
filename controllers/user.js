@@ -1,17 +1,19 @@
-const User = require('../controllers/user');
+const User = require('../models/user');
+const { errorMessage } = require('../utils/errorMessage');
 
 // возвращает всех пользователей
 module.exports.getUser = (req, res) => {
   User.find({})
     .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(err => errorMessage(err, req, res));
 };
 
 // возвращает пользователя по _id
 module.exports.findUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+    .orFail()
+    .then(user => res.send(user))
+    .catch(err => errorMessage(err, req, res));
 };
 
 // создаёт пользователя
@@ -20,17 +22,20 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(err => errorMessage(err, req, res));
 };
 
 // обновляет профиль
-module.exports.findUserInfo = (req, res) => {
+module.exports.changeUserInfo = (req, res) => {
   const { name, about } = req.body;
+  console.log(req.user);
+  console.log(req.body);
   const userId = req.user._id;
 
-  User.findByIdAndUpdate( { name, about }, userId, { new: true, runValidators: true })
-    .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+  User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
+    .orFail()
+    .then(user => res.send(user))
+    .catch(err => errorMessage(err, req, res));
 };
 
 // обновляет аватар
@@ -38,7 +43,8 @@ module.exports.findUserAvatar = (req, res) => {
   const { link } = req.body;
   const userId = req.user._id;
 
-  User.findByIdAndUpdate( { link }, userId, { new: true, runValidators: true })
+  User.findByIdAndUpdate(userId, { link }, { new: true, runValidators: true })
+    .orFail()
     .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(err => errorMessage(err, req, res));
 };
