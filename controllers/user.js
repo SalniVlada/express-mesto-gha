@@ -25,7 +25,9 @@ module.exports.getUserMe = (req, res) => {
 // возвращает пользователя по _id
 module.exports.findUserById = (req, res) => {
   User.findById(req.params.userId)
-    .orFail()
+    .orFail(() => {
+      throw new NOT_FOUND_ERROR('Пользователь не найден');
+    })
     .then((user) => res.send(user))
     .catch((err) => errorMessage(err, req, res));
 };
@@ -51,7 +53,9 @@ module.exports.changeUserInfo = (req, res) => {
   const userId = req.user._id;
 
   User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
-    .orFail()
+    .orFail(() => {
+      throw new NOT_FOUND_ERROR('Пользователь с таким id не найден');
+    })
     .then((user) => res.send(user))
     .catch((err) => errorMessage(err, req, res));
 };
@@ -62,7 +66,9 @@ module.exports.findUserAvatar = (req, res) => {
   const userId = req.user._id;
 
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
-    .orFail()
+    .orFail(() => {
+      throw new NOT_FOUND_ERROR('Пользователь с таким id не найден');
+    })
     .then((user) => res.send({ data: user }))
     .catch((err) => errorMessage(err, req, res));
 };
