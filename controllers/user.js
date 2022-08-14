@@ -13,13 +13,13 @@ module.exports.getUser = (req, res) => {
 };
 
 // возвращает информацию о текущем пользователе
-module.exports.getUserMe = (req, res) => {
+module.exports.getUserMe = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => {
       throw new NOT_FOUND_ERROR('Пользователь с таким id не найден');
     })
     .then((user) => res.status(OK).send(user))
-    .catch((err) => errorMessage(err, req, res));
+    .catch((err) => errorMessage(err, req, res, next));
 };
 
 // возвращает пользователя по _id

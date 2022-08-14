@@ -38,21 +38,21 @@ module.exports.deleteCard = (req, res, next) => {
 };
 
 // поставить лайк карточке
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .orFail(() => {
       throw new NOT_FOUND_ERROR('Карточка с таким id не найдена');
     })
     .then((card) => res.send({ data: card }))
-    .catch((err) => errorMessage(err, req, res));
+    .catch((err) => errorMessage(err, req, res, next));
 };
 
 // убрать лайк с карточки
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => {
       throw new NOT_FOUND_ERROR('Карточка с таким id не найдена');
     })
     .then((card) => res.send({ data: card }))
-    .catch((err) => errorMessage(err, req, res));
+    .catch((err) => errorMessage(err, req, res, next));
 };
