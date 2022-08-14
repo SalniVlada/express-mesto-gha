@@ -1,10 +1,24 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-const { errorMessage, CREATED } = require('../utils/errorMessage');
+const { errorMessage } = require('../utils/errorMessage');
+const { NOT_FOUND_ERROR } = require('../errors/notFoundError');
+const { CREATED, OK } = require('../utils/successes');
 
 // возвращает всех пользователей
 module.exports.getUser = (req, res) => {
   User.find({})
     .then((user) => res.send({ data: user }))
+    .catch((err) => errorMessage(err, req, res));
+};
+
+// возвращает информацию о текущем пользователе
+module.exports.getUserMe = (req, res) => {
+  User.findById(req.user._id)
+    .orFail(() => {
+      throw new NOT_FOUND_ERROR('Пользователь с таким id не найден');
+    })
+    .then((user) => res.status(OK).send(user))
     .catch((err) => errorMessage(err, req, res));
 };
 
@@ -17,12 +31,18 @@ module.exports.findUserById = (req, res) => {
 };
 
 // создаёт пользователя
-module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+module.exports.createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
-  User.create({ name, about, avatar })
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => User.findOne({ _id: user._id }))
     .then((user) => res.status(CREATED).send({ data: user }))
-    .catch((err) => errorMessage(err, req, res));
+    .catch((err) => errorMessage(err, req, res, next));
 };
 
 // обновляет профиль
@@ -45,4 +65,18 @@ module.exports.findUserAvatar = (req, res) => {
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => errorMessage(err, req, res));
+};
+
+// получает по запросу почту или пароль и проверяет их
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+        expiresIn: '7d',
+      });
+      res.send({ jwt: token });
+    })
+    .catch(next);
 };
