@@ -23,13 +23,13 @@ module.exports.getUserMe = (req, res) => {
 };
 
 // возвращает пользователя по _id
-module.exports.findUserById = (req, res) => {
+module.exports.findUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
       throw new NOT_FOUND_ERROR('Пользователь не найден');
     })
     .then((user) => res.send(user))
-    .catch((err) => errorMessage(err, req, res));
+    .catch((err) => errorMessage(err, req, res, next));
 };
 
 // создаёт пользователя
@@ -48,7 +48,7 @@ module.exports.createUser = (req, res, next) => {
 };
 
 // обновляет профиль
-module.exports.changeUserInfo = (req, res) => {
+module.exports.changeUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   const userId = req.user._id;
 
@@ -57,11 +57,11 @@ module.exports.changeUserInfo = (req, res) => {
       throw new NOT_FOUND_ERROR('Пользователь с таким id не найден');
     })
     .then((user) => res.send(user))
-    .catch((err) => errorMessage(err, req, res));
+    .catch((err) => errorMessage(err, req, res, next));
 };
 
 // обновляет аватар
-module.exports.findUserAvatar = (req, res) => {
+module.exports.findUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const userId = req.user._id;
 
@@ -70,7 +70,7 @@ module.exports.findUserAvatar = (req, res) => {
       throw new NOT_FOUND_ERROR('Пользователь с таким id не найден');
     })
     .then((user) => res.send({ data: user }))
-    .catch((err) => errorMessage(err, req, res));
+    .catch((err) => errorMessage(err, req, res, next));
 };
 
 // получает по запросу почту или пароль и проверяет их
