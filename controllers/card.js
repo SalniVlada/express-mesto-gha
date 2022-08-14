@@ -24,7 +24,9 @@ module.exports.createCard = (req, res, next) => {
 // удаляет карточку по идентификатору
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .orFail()
+    .orFail(() => {
+      throw new NOT_FOUND_ERROR('Карточка с таким id не найдена');
+    })
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
         throw new FORBIDDEN_ERROR('Эту карточку нельзя удалить');
