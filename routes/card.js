@@ -7,6 +7,7 @@ const {
 
 router.get('/', getCard);
 
+// создать карточку
 router.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
@@ -14,21 +15,24 @@ router.post('/', celebrate({
   }),
 }), createCard);
 
+// удалить карточку
 router.delete('/:cardId', celebrate({
   body: Joi.object().keys({
-    cardId: Joi.string().length(24),
+    cardId: Joi.string().required().hex().length(24),
   }),
 }), deleteCard);
 
+// лайкнуть карточку
 router.put('/:cardId/likes', celebrate({
   body: Joi.object().keys({
-    cardId: Joi.string().length(24),
+    cardId: Joi.string().required().hex().length(24),
   }),
 }), likeCard);
 
+// дислайкнуть карточку
 router.delete('/:cardId/likes', celebrate({
   body: Joi.object().keys({
-    cardId: Joi.string().length(24),
+    cardId: Joi.string().required().hex().length(24),
   }),
 }), dislikeCard);
 
