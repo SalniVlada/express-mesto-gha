@@ -1,18 +1,17 @@
 [![Tests](https://github.com/SalniVlada/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/SalniVlada/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/SalniVlada/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/SalniVlada/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
-# Проект Mesto фронтенд + бэкенд
 
-## Ссылка на проект
+# Проект "Место" - бэкенд
 
-[https://github.com/SalniVlada/express-mesto-gha](https://github.com/SalniVlada/express-mesto-gha)
+Был создан в рамках обучения на платформе Яндекс.Практикум по специальности "Веб-разработчик". Демонстрирует навыки разработки бэкенда на Node.js, Express и MongoDB.
 
+## О проекте
+Одностраничный сайт, в котором пользователь может загружать свои фотографии из путешествий и делиться ими с другими пользователями.
 
-## Директории
+## Используемые технологии
 
-`/routes` — папка с файлами роутера  
-`/controllers` — папка с файлами контроллеров пользователя и карточки   
-`/models` — папка с файлами описания схем пользователя и карточки  
-  
-Остальные директории вспомогательные, создаются при необходимости разработчиком
+* Node.js
+* Express
+* MongoDB
 
 ## Запуск проекта
 

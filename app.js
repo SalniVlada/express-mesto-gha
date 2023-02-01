@@ -11,8 +11,11 @@ const { NOT_FOUND_ERROR } = require('./errors/notFoundError');
 const { login, createUser } = require('./controllers/user');
 const { auth } = require('./middlewares/auth');
 
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(requestLogger);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -39,6 +42,8 @@ app.use('/cards', require('./routes/card'));
 app.use((req, res, next) => {
   next(new NOT_FOUND_ERROR('Запрашиваемый ресурс не найден'));
 });
+
+app.use(errorLogger);
 
 app.use(errors());
 
